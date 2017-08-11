@@ -1,0 +1,101 @@
+#ff-title-bar
+  -webkit-app-region: drag
+  height: 32px
+  padding: 0px
+  margin: 0px
+  color: $black
+  background-color: $white
+  border: none
+  border-bottom: 1px solid $grey-lighter
+  position: absolute
+
+  #title
+    position: fixed
+    top: 0px
+    left: 12px
+    line-height: 32px
+    font-size: 14px
+
+  #title-bar-btns
+    -webkit-app-region: no-drag
+    position: fixed
+    top: 1px
+    right: 0px
+    button
+      height: 32px
+      width: 32px
+      color: $grey-lighter
+      background-color: transparent
+      border: none
+      font-size: 16px
+      outline: none
+    button:hover
+      color: black
+      background-color: $grey-lighter
+      &#close-btn
+        color: $white
+        background-color: $red
+
+.ff-default #ff-title-bar
+  color: black
+  background-color: $white
+  border: none
+  border-bottom: 1px solid $grey-lighter
+  #title-bar-btns
+    button
+      color: $grey-lighter
+      background-color: transparent
+    button:hover
+      color: black
+      background-color: $grey-lighter
+      &#close-btn
+        color: $white
+        background-color: $red
+
+.ff-dark #ff-title-bar
+  color: $white
+  background-color: $grey-darker
+  border: 1px solid $grey-darker
+  #title-bar-btns
+    button
+      background-color: transparent
+    button:hover
+      background-color: $grey-darker
+
+.ff-sierra #ff-title-bar
+  height: 22px
+  border: none
+  #title
+    color: $white
+    width: 100%
+    top: 0px
+    left: 0px
+    padding-top: 2px
+    line-height: 22px
+    font-size: 14px
+    text-align: center
+    font-family: $family-univers
+  #title-bar-btns
+    top: 0px
+    left: 0px
+    padding-top: 5px
+    padding-left: 8px
+    padding-right: 8px
+    width: 76px
+    height: 22px
+    .button
+      color: transparent
+      padding-left: calc(0.375em - 1px)
+      padding-right: calc(0.375em - 1px)
+      margin-right: 8px
+      border-radius: 50%
+      width: 12px
+      height: 12px
+    .is-small
+      width: 0.5em
+      height: 0.5em
+      .fa
+        font-size: 0.5em
+  #title-bar-btns:hover
+    .button
+      color: $black

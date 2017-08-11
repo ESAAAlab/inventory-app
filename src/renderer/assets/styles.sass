@@ -1,0 +1,186 @@
+// Import the initial variables
+@import "../../../node_modules/bulma/sass/utilities/initial-variables"
+@import "../../../node_modules/sass-font-face/_font-face.scss"
+
+// Define new default fonts
+$univers-regular: 'Univers'
+$univers-light: 'Univers Light'
+@include font-face($univers-regular, 'fonts/', 'Univers', 'univers')
+@include font-face($univers-light, 'fonts/', 'Univers-Light', 'univers-light')
+
+// Add a Univers family
+$family-univers: $univers-regular, "Verdana", sans-serif
+$family-univers-light: $univers-light, "Verdana", sans-serif
+
+// Use the new Univers family
+$family-primary: $family-univers
+
+// Define new default colors & stylings
+$black: rgb(40, 40, 40)
+$blacker: rgb(34, 34, 34)
+$blackest: rgb(10, 10, 10)
+$red: rgb(254, 66, 83)
+$green: rgb(46, 218, 130)
+$green-lighter: rgb(154, 255, 203)
+$green-invert: $white
+$purple: hsl(271, 100%, 71%)
+$purple-darker: hsl(271, 54%, 44%)
+
+$primary: $blackest
+$primary-invert: $white
+
+$tabs-border-bottom-width: 5px
+
+$radius: 0px
+$radius-small: 0px
+$radius-large: 0px
+
+// Miscellaneous styles
+.wide-separator
+  align-self: center
+  margin: auto
+  min-height: 1px
+  min-width: 100%
+  background-color: $primary
+
+.hero-body
+  padding: 1.5rem 1.5rem !important
+
+// v-autocomplete styling
+.v-autocomplete
+  position: relative
+
+.v-autocomplete .v-autocomplete-list
+  position: absolute
+
+.v-autocomplete .v-autocomplete-list .v-autocomplete-list-item
+  cursor: pointer
+
+// NumberInputSpinner styling
+$input: $grey-darker !default
+$input-background: $white !default
+$input-border: $grey-lighter !default
+
+.is-transaction-flag
+  cursor: default !important
+
+.is-disabled
+  background-color: $input-background !important
+  border-color: $input-border !important
+  box-shadow: none
+  cursor: default !important
+  color: $input !important
+  width: 40px !important
+
+// Draggable header
+#header
+  -webkit-app-region: drag
+  background-color: $black !important
+
+.nprogress-container
+  margin-top: -2px
+  overflow: visible !important
+  .bar
+    height: 2px !important
+    background-color: $purple !important
+  .peg
+    visibility: hidden !important
+  .spinner
+    top: -30px !important
+    .spinner-icon
+      border-top-color: $purple !important
+      border-left-color: $purple-darker !important
+
+#app
+  height: 100vh
+  padding: 0px 0px 20px 0px
+
+#menubar
+  margin-bottom: 0px
+  ul
+    border: 0px
+    padding-bottom: 0px
+    margin-bottom: 0px
+    li
+      padding-bottom: 10px
+  .is-active
+    background-color: $blacker !important
+    a
+      color: $primary-invert !important
+      border-bottom-color: $green-lighter !important
+      border-bottom-width: 2px
+
+.panel-heading
+  background-color: $primary !important
+  color: $primary-invert !important
+  border: 0px !important
+
+// Remove scrollbars
+html
+  overflow-y: hidden !important
+
+// Images styling
+.center-cropped
+  object-fit: cover
+  object-position: center
+  padding: 5px
+
+.small-avatar
+  max-width: 48px
+  max-height: 48px
+
+//
+.has-alternating-rows
+  margin-top: -9px !important
+  margin-bottom: -9px !important
+  .is-alternating-row
+    border-bottom: 1px solid $grey-lighter
+    margin-top: 0px !important
+    margin-bottom: 0px !important
+  .is-alternating-row:first-child
+    border-top: 1px solid $grey-lighter
+  .is-alternating-row:nth-child(odd)
+    background-color: $white-ter
+  .is-alternating-row:nth-child(even)
+    background-color: $white-bis
+  .is-clickable
+    cursor: pointer !important
+  .is-clickable:hover
+    background-color: $green-lighter !important
+
+.mini-toastr
+  top: 20px !important
+  right: 20px !important
+  font-size: 0.8rem
+
+.mini-toastr__notification
+  border-radius: 0px !important
+  box-shadow: none !important
+  text-align: right !important
+  width: auto !important
+  .mini-toastr-notification__title
+    font-weight: bold
+  .mini-toastr-notification__message
+    padding-right: 0px !important
+    padding-left: 4px !important
+  .fa
+    font-size: 12px
+    vertical-align: baseline
+
+.mini-toastr__notification.-error
+  background-color: $red !important
+
+.mini-toastr__notification.-success
+  background-color: $green !important
+
+.mini-toastr__notification.-warn
+  background-color: $yellow !important
+  color: $black !important
+
+.mini-toastr__notification.-info
+  background-color: $blue !important
+
+// Import the rest of Bulma
+
+@import "./frameless-frame.sass"
+@import "../../../node_modules/bulma/bulma"
