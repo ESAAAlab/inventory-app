@@ -1,16 +1,11 @@
-<template lang="html">
-  <div>
-    <div class="panel-block">
-      <p class="control">
-        <input class="input" type="text" v-model="searchText" :placeholder="placeholder" :disabled="disabled" @blur="blur" @focus="focus" @input="inputChange">
-      </p>
-    </div>
-    <div class="panel-block" v-if="internalItems.length">
-      <div class="container has-alternating-rows">
-        <div :is="componentItem" :item="item" v-for="item in internalItems"></div>
-      </div>
-    </div>
-  </div>
+<template lang='pug'>
+  div
+    div(class='panel-block')
+      p(class='control')
+        input(class='input' type='text' v-model='searchText' :placeholder='placeholder' :disabled='disabled' @blur='blur' @focus='focus' @input='inputChange')
+    div(class='panel-block' v-if='internalItems.length')
+      div(class='container has-alternating-rows')
+        div(:is='componentItem' :item='item' v-for='item in internalItems')
 </template>
 
 <script>

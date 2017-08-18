@@ -1,23 +1,19 @@
-<template>
-  <div class="field has-addons">
-    <p class="control">
-      <input type="button" @click="decrementValue" class="button is-small" value="-"/>
-    </p>
-    <p class="control">
-      <input
-          type="number"
-          ref="input"
-          v-bind:value="value"
-          class="input is-small is-disabled"
-          :disabled="true"
-          :min="min"
-          :max="max"
-      />
-    </p>
-    <p class="control">
-      <input type="button" @click="incrementValue" class="button is-small" value="+"/>
-    </p>
-  </div>
+<template lang='pug'>
+  div(class='field has-addons')
+    p(class='control')
+      input(type='button' @click='decrementValue' class='button is-small' value='-')
+    p(class='control')
+      input(
+        type='number'
+        ref='input'
+        v-bind:value='value'
+        class='input is-small is-disabled'
+        :disabled='true'
+        :min='min'
+        :max='max'
+      )
+    p(class='control')
+      input(type='button' @click='incrementValue' class='button is-small' value='+')
 </template>
 
 <script>

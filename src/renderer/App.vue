@@ -1,28 +1,22 @@
-<template>
-  <div id="app">
-    <section class="hero is-unselectable" id="header">
-      <div class="hero-body">
-        <div class="container">
-          <figure class="image is-64x64">
-            <img src="~@/assets/logo.svg">
-          </figure>
-        </div>
-      </div>
-    </section>
-    <div>
-      <nprogress-container></nprogress-container>
-    </div>
-    <div class="tabs container is-unselectable is-centered is-medium is-fullwidth" id="menubar">
-      <ul>
-        <li v-bind:class="{ 'is-active': isHome }"><router-link to="/">Accueil</router-link></li>
-        <li v-bind:class="{ 'is-active': isLend }"><router-link to="/lend">Prêts &amp; Retours</router-link></li>
-        <li v-bind:class="{ 'is-active': isInventory }"><router-link to="/inventory">Inventaire</router-link></li>
-      </ul>
-    </div>
-    <div class="container">
-      <router-view></router-view>
-    </div>
-  </div>
+<template lang='pug'>
+  div(id='app')
+    section(class='hero is-unselectable' id='header')
+      div(class='hero-body')
+        div(class='container')
+          figure(class='image is-64x64')
+            img(src='~@/assets/logo.svg')
+    div
+      nprogress-container
+    div(class='tabs container is-unselectable is-centered is-medium is-fullwidth' id='menubar')
+      ul
+        li(v-bind:class='{ "is-active": isHome }')
+          router-link(to='/') Accueil
+        li(v-bind:class='{ "is-active": isLend }')
+          router-link(to='/lend') Prêts &amp; Retours
+        li(v-bind:class='{ "is-active": isInventory }')
+          router-link(to='/inventory') Inventaire
+    div(class='container')
+      router-view
 </template>
 
 <script>

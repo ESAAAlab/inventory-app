@@ -10,8 +10,14 @@ import NProgress from 'vue-nprogress'
 import VueNotifications from 'vue-notifications'
 import miniToastr from 'mini-toastr'
 
+import Chartkick from 'chartkick'
+import VueChartkick from 'vue-chartkick'
+// eslint-disable-next-line
+import Chart from 'chart.js'
+
 import './assets/styles.sass'
 import 'font-awesome/css/font-awesome.css'
+import 'ionicons/dist/css/ionicons.css'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
@@ -22,6 +28,7 @@ Vue.filter('formatLendingDate', function (value) {
 })
 
 Vue.use(NProgress)
+Vue.use(VueChartkick, { Chartkick })
 
 // SETUP NOTIFICATIONS
 const toastTypes = {
