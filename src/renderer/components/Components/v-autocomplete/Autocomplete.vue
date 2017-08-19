@@ -1,9 +1,9 @@
 <template lang='pug'>
   div
-    div(class='panel-block')
-      p(class='control')
-        input(class='input' type='text' v-model='searchText' :placeholder='placeholder' :disabled='disabled' @blur='blur' @focus='focus' @input='inputChange')
-    div(class='panel-block' v-if='internalItems.length')
+    div(class='v-autocomplete panel-block')
+      div(class='control v-autocomplete-input-group' :class='{"v-autocomplete-selected": value}')
+        input(class='input' ref="inputField" :class='inputClass' type='text' v-model='searchText' :placeholder='placeholder' :disabled='disabled' @blur='blur' @focus='focus' @input='inputChange')
+    div(class='v-autocomplete-list panel-block' v-if='showList && internalItems.length')
       div(class='container has-alternating-rows')
         div(:is='componentItem' :item='item' v-for='item in internalItems')
 </template>
@@ -26,6 +26,7 @@ export default {
     },
     items: Array,
     autoSelectOneItem: { type: Boolean, default: true },
+    inputClass: String,
     disabled: {
       type: Boolean,
       default: false
@@ -59,7 +60,6 @@ export default {
     },
 
     onClickItem (item) {
-      console.log('clicked')
       this.onSelectItem(item)
       this.$emit('item-clicked', item)
     },

@@ -3,21 +3,22 @@
     div(class='columns is-gapless')
       div(class='column')
         nav(class='panel')
-          p(class="panel-heading has-icons-right is-unselectable")
-            span Etudiant
-            a(class="button is-small is-pulled-right is-danger" v-if="selectedUser" v-on:click="resetUser")
-              i(class='fa fa-repeat is-small')
+          div(class="panel-heading is-unselectable")
+            h1(class='title is-4')
+              span(class='has-text-light') Etudiant
           v-autocomplete(
             class='container'
+            ref='userSearchField'
             v-if='!selectedUser'
             :items='users'
             v-model='selectedUser'
             :get-label='getUserLabel'
             :min-len='0'
-            @update-items='getUsers'
+            @update-items='getSearchUsers'
             :component-item='userTemplate'
             @item-selected='getUserTransactions'
-            :placeholder='"Tapez un nom ou scannez un code barre"')
+            :placeholder='"Tapez un nom ou scannez un code barre"'
+            )
           div(class='card' v-if='selectedUser')
             div(class='card-image')
               figure(class='image is-square')
@@ -39,64 +40,105 @@
                         | {{ selectedUser.cellPhone }}
       div(class='column is-two-thirds' v-if='selectedUser')
         nav(class='panel')
-          p(class='panel-heading is-unselectable') Outils
+          div(class="panel-heading has-icons-right is-unselectable")
+            h1(class='title is-4')
+              span(class='has-text-light') Outils
           v-autocomplete(
             :items='tools'
+            ref='toolSearchField'
             v-model='selectedTool'
             :get-label='getToolLabel'
             :min-len='0'
-            @update-items='getTools'
+            @update-items='getSearchTools'
             :component-item='toolTemplate'
-            @item-selected='addPendingTool'
+            @item-selected='addPendingToolLending'
             :placeholder='"Tapez un nom ou scannez un code barre"')
-          div(class='panel-block is-paddingless has-text-centered' v-if='pendingTools.length > 0')
+          div(class='panel-block is-paddingless has-text-centered' v-if='pendingLendings.length > 0')
             div(class='wide-separator')
-          div(class='panel-block' v-if='pendingTools.length > 0')
+          div(class='panel-block' v-if='pendingLendings.length > 0')
             div(class='container has-alternating-rows')
-              div(class='columns is-alternating-row' v-for='tool in pendingTools')
+              div(class='columns is-alternating-row' v-for='tool in pendingLendings')
                 div(class='column')
                   strong {{ tool.name }}
                 div(class='column is-narrow')
                   number-input-spinner(v-model='tool.lendingQuantity' :max='Number(tool.stockAvailable)')
                 div(class='column is-narrow')
-                  button(class='button is-small is-danger is-pulled-right' v-on:click='removePendingTool(tool)')
+                  button(class='button is-small is-danger is-pulled-right' v-on:click='removePendingToolLending(tool)')
                     span(class='icon is-small')
                       i(class='fa fa-times')
-          div(class='panel-block' v-if='pendingTools.length > 0')
-            button(class='button is-danger is-fullwidth' v-on:click='clearPendingTools()')
-              span(class='icon is-small')
+                    span Supprimer
+          div(class='panel-block' v-if='pendingLendings.length > 0')
+            button(class='button is-danger is-fullwidth' v-on:click='clearPendingToolLendings()')
+              span(class='icon')
                 i(class='fa fa-times')
+              span Annuler le prêt
             span &nbsp;
-            button(class='button is-success is-fullwidth' v-on:click='commitTransactions()')
-              span(class='icon is-small')
+            button(class='button is-success is-fullwidth' v-on:click='lendModalActive = true')
+              span(class='icon')
                 i(class='fa fa-check')
-        nav(class='panel')
-          p(class='panel-heading is-unselectable') Prêts en cours
-          div(class='panel-block')
+              span Prêter ces outils
+        nav(class='panel' v-if='userTransactions.length > 0 || pendingReturns.length > 0')
+          div(class="panel-heading has-icons-right is-unselectable")
+            h1(class='title is-4')
+              span(class='has-text-light') Prêts en cours
+          div(class='panel-block' v-if='userTransactions.length > 0')
             div(class='container has-alternating-rows')
               div(class='columns is-alternating-row' v-for='transaction in userTransactions')
                 div(class='column')
                   strong {{ transaction.transactions[0].name }} &nbsp;
-                  | small x {{transaction.quantity}}
-                div(class='column')
+                  small x {{transaction.quantity}}
+                div(class='column is-marginless')
                   small {{ transaction.createdAt | formatLendingDate }}
                 div(class='column is-narrow')
-                  a(class='button is-small is-success is-pulled-right' v-on:click='endTransaction(transaction.id)')
+                  button(class='button is-small is-success is-pulled-right' v-on:click='addPendingToolReturn(transaction)')
                     span(class='icon is-small')
                       i(class='fa fa-check')
-    div(v-if='!selectedUser')
+                    span Rendre outil
+        nav(class='panel' v-if='pendingReturns.length > 0')
+          div(class="panel-heading has-icons-right is-unselectable")
+            h1(class='title is-4')
+              span(class='has-text-light') Retours
+          div(class='panel-block' v-if='pendingReturns.length > 0')
+            div(class='container has-alternating-rows')
+              div(class='columns is-alternating-row' v-for='transaction in pendingReturns')
+                div(class='column')
+                  strong {{ transaction.transactions[0].name }} &nbsp;
+                  small x {{transaction.quantity}}
+                div(class='column is-marginless')
+                  small {{ transaction.createdAt | formatLendingDate }}
+                div(class='column is-narrow')
+                  button(class='button is-small is-danger is-pulled-right' v-on:click='removePendingToolReturn(transaction)')
+                    span(class='icon is-small')
+                      i(class='fa fa-times')
+                    span Supprimer
+          div(class='panel-block' v-if='pendingReturns.length > 0')
+            button(class='button is-danger is-fullwidth' v-on:click='clearPendingToolReturns()')
+              span(class='icon')
+                i(class='fa fa-times')
+              span Annuler le retour
+            span &nbsp;
+            button(class='button is-success is-fullwidth' v-on:click='returnModalActive = true')
+              span(class='icon')
+                i(class='fa fa-check')
+              span Rendre ces outils
+        nav(class='panel')
+          div(class="panel-block is-unselectable")
+            button(class='button is-danger is-fullwidth' v-on:click='resetUser()')
+              span(class='icon')
+                i(class='fa fa-times')
+              span Choisir un autre utilisateur
+    div(v-if='!selectedUser && latestLendings.length > 0')
       nav(class='panel')
-        p(class='panel-heading has-icons-right is-unselectable') 10 dernieres transactions
+        div(class='panel-heading is-unselectable')
+          h1(class='title is-4')
+            span(class='has-text-light') 10 dernières transactions
         div(class='panel-block')
           div(class='container has-alternating-rows')
               div(class='columns is-alternating-row' v-bind:class='{ "is-clickable": !transaction.ended }' v-for='transaction in latestLendings' v-on:click='!transaction.ended ? getUser(transaction.lendings[0]) : null')
                 div(class='column is-narrow')
-                  a(v-if='transaction.ended' class='button is-small is-success is-outlined is-transaction-flag' disabled)
-                    span(class='icon is-small')
-                      i(class='fa fa-sign-in')
-                  a(v-if='!transaction.ended' class='button is-small is-danger is-outlined is-transaction-flag' disabled)
-                    span(class='icon is-small')
-                      i(class='fa fa-sign-out')
+                  button(class='button is-small is-danger is-transaction-flag')
+                    span(class='icon')
+                      i(class='ion ion-md-log-out')
                 div(class='column')
                   strong {{ transaction.lendings[0].lastName }}&nbsp;
                   | {{transaction.lendings[0].firstName}}
@@ -104,7 +146,47 @@
                   strong {{ transaction.transactions[0].name }}&nbsp;
                   small x {{transaction.quantity}}
                 div(class='column is-narrow')
-                  small {{ transaction.createdAt | formatLendingDate }}
+                  small {{ transaction.startDate | formatLendingDate }}
+    div(class="modal" v-bind:class='{ "is-active": lendModalActive}')
+      div(class="modal-background")
+      div(class="modal-content")
+        div(class='box')
+          div(class='content')
+            h5(class='title is-5') Etes vous sur de vouloir prêter ces articles ?
+            ul
+              li(v-for='tool in pendingLendings')
+                strong {{ tool.name }} &nbsp;
+                small x {{ tool.lendingQuantity }}
+          div(class='columns')
+            button(class='button column is-danger is-fullwidth' v-on:click='clearPendingToolLendings()')
+              span(class='icon')
+                i(class='fa fa-times')
+              span Annuler le prêt
+            span &nbsp;
+            button(class='button column is-success is-fullwidth' v-on:click='commitLendings()')
+              span(class='icon')
+                i(class='fa fa-check')
+              span Prêter ces outils
+    div(class="modal" v-bind:class='{ "is-active": returnModalActive}')
+      div(class="modal-background")
+      div(class="modal-content")
+        div(class='box')
+          div(class='content')
+            h5(class='title is-5') Etes vous sur de vouloir rendre ces articles ?
+            ul
+              li(v-for='transaction in pendingReturns')
+                strong {{ transaction.transactions[0].name }} &nbsp;
+                small x {{transaction.quantity}}
+          div(class='columns')
+            button(class='button column is-danger is-fullwidth' v-on:click='clearPendingToolReturns()')
+              span(class='icon')
+                i(class='fa fa-times')
+              span Annuler le retour
+            span &nbsp;
+            button(class='button column is-success is-fullwidth' v-on:click='commitReturns()')
+              span(class='icon')
+                i(class='fa fa-check')
+              span Rendre ces outils
 </template>
 
 <script>
@@ -120,35 +202,68 @@
     data () {
       return {
         users: [],
-        userSearchIsLoading: false,
         selectedUser: null,
         userTemplate: UserTemplate,
 
         tools: [],
-        toolSearchIsLoading: false,
         selectedTool: null,
         toolTemplate: ToolTemplate,
 
-        pendingTools: [],
+        pendingLendings: [],
+        pendingReturns: [],
+
+        lendModalActive: false,
+        returnModalActive: false,
+
         userTransactions: [],
-
-        transaction: null,
-
         latestLendings: []
       }
     },
+    props: ['user'],
     mounted: function () {
       this.ax = this.$parent.ax
       this.$parent.setMenuActive(2)
-      this.getLatestTransactions()
+      if (this.$props.user.id === undefined) {
+        this.getLatestTransactions()
+        this.$refs.userSearchField.$refs.inputField.focus()
+      } else {
+        this.getUser(this.$props.user)
+      }
     },
     methods: {
+      getLatestTransactions () {
+        var vm = this
+        this.ax.get('/transaction/latest/false/' + 10)
+          .then(function (response) {
+            vm.latestLendings = response.data
+            vm.$refs.userSearchField.$refs.inputField.focus()
+          })
+      },
+
+      getSearchUsers (query) {
+        var vm = this
+        if (query.startsWith('“')) {
+          query = query.replace('“', '')
+        }
+        if (query.length === 0) {
+          vm.users = []
+          return
+        }
+        this.ax.get('/user/name/' + query)
+          .then(function (response) {
+            vm.users = response.data
+          })
+      },
+
+      getUserLabel (item) {
+        return item.lastName + ' ' + item.firstName
+      },
+
       getUser (user) {
         var vm = this
         this.ax.get('/user/' + user.id)
           .then(function (response) {
             vm.selectedUser = response.data
-            vm.userSearchIsLoading = false
             vm.getUserTransactions(vm.selectedUser)
           })
       },
@@ -157,40 +272,8 @@
         this.selectedUser = null
         this.users = []
         this.selectedTool = null
-        this.pendingTools = []
+        this.pendingLendings = []
         this.getLatestTransactions()
-      },
-
-      getLatestTransactions () {
-        var vm = this
-        this.ax.get('/transaction/latest/false/' + 10)
-          .then(function (response) {
-            vm.latestLendings = response.data
-          })
-      },
-
-      getUsers (query) {
-        var vm = this
-        vm.userSearchIsLoading = true
-        var queryString = '/user/name/'
-        if (query.startsWith('#')) {
-          queryString = '/user/barcode/'
-          query = query.replace('#', '')
-        }
-        if (query.length === 0) {
-          vm.users = []
-          vm.userSearchIsLoading = false
-          return
-        }
-        this.ax.get(queryString + query)
-          .then(function (response) {
-            vm.users = response.data
-            vm.userSearchIsLoading = false
-          })
-      },
-
-      getUserLabel (item) {
-        return item.lastName + ' ' + item.firstName
       },
 
       getUserTransactions (user) {
@@ -198,21 +281,19 @@
         this.ax.get('/transaction/user/' + user.id)
           .then(function (response) {
             vm.userTransactions = response.data
+            vm.$refs.toolSearchField.$refs.inputField.focus()
           })
       },
 
-      getTools (query) {
+      getSearchTools (query) {
         var vm = this
-        vm.toolSearchIsLoading = true
         if (query === '') {
           vm.tools = []
-          vm.toolSearchIsLoading = false
           return
         }
         this.ax.get('/inventory/search/available/' + query)
           .then(function (response) {
             vm.tools = response.data
-            vm.toolSearchIsLoading = false
           })
       },
 
@@ -220,30 +301,42 @@
         return item.name
       },
 
-      addPendingTool (tool) {
+      addPendingToolLending (tool) {
         this.selectedTool = null
         this.tools = []
-        for (var t of this.pendingTools) {
+        for (var t of this.pendingLendings) {
           if (t.id === tool.id) {
             return
           }
         }
         tool.lendingQuantity = 1
         tool.tempTimestamp = Date.now()
-        this.pendingTools.push(tool)
+        this.pendingLendings.push(tool)
+        this.$refs.toolSearchField.$refs.inputField.focus()
       },
 
-      removePendingTool (tool) {
-        this.pendingTools = this.pendingTools.filter(function (el) {
+      removePendingToolLending (tool) {
+        this.pendingLendings = this.pendingLendings.filter(function (el) {
           return el.tempTimestamp !== tool.tempTimestamp
         })
       },
 
-      clearPendingTools () {
-        this.pendingTools = []
+      clearPendingToolLendings () {
+        this.pendingLendings = []
+        this.lendModalActive = false
+        this.$refs.toolSearchField.$refs.inputField.focus()
       },
 
-      addTransaction (tool, index, total) {
+      commitLendings () {
+        for (var t in this.pendingLendings) {
+          this.lendTool(this.pendingLendings[t], t, this.pendingLendings.length)
+        }
+        this.selectedTool = null
+        this.clearPendingToolLendings()
+        this.getUserTransactions(this.selectedUser)
+      },
+
+      lendTool (tool, index, total) {
         var vm = this
         vm.selectedTool = tool
         this.ax.post('/transaction', {
@@ -255,26 +348,63 @@
           if (Number(index) + 1 === Number(total)) {
             vm.getUserTransactions(vm.selectedUser)
             vm.$parent.showAjaxSuccess({message: total + ' outils prêtés'})
+            vm.$parent.getOpenTransactionsCount()
           }
         })
       },
 
-      commitTransactions () {
-        for (var t in this.pendingTools) {
-          this.addTransaction(this.pendingTools[t], t, this.pendingTools.length)
+      addPendingToolReturn (transaction) {
+        this.selectedTool = null
+        this.tools = []
+        for (var t of this.pendingReturns) {
+          if (t.id === transaction.id) {
+            return
+          }
+        }
+        transaction.tempTimestamp = Date.now()
+        this.pendingReturns.push(transaction)
+        this.userTransactions = this.userTransactions.filter(function (el) {
+          return el.id !== transaction.id
+        })
+        this.$refs.toolSearchField.$refs.inputField.focus()
+      },
+
+      removePendingToolReturn (transaction) {
+        this.userTransactions.push(transaction)
+        this.pendingReturns = this.pendingReturns.filter(function (el) {
+          return el.tempTimestamp !== transaction.tempTimestamp
+        })
+      },
+
+      clearPendingToolReturns () {
+        for (var t of this.pendingReturns) {
+          this.userTransactions.push(t)
+        }
+        this.pendingReturns = []
+        this.returnModalActive = false
+        this.$refs.toolSearchField.$refs.inputField.focus()
+      },
+
+      commitReturns () {
+        for (var t in this.pendingReturns) {
+          this.returnTool(this.pendingReturns[t], t, this.pendingReturns.length)
         }
         this.selectedTool = null
-        this.clearPendingTools()
+        this.clearPendingToolReturns()
         this.getUserTransactions(this.selectedUser)
       },
 
-      endTransaction (transactionId) {
+      returnTool (transaction, index, total) {
         var vm = this
-        this.ax.put('/transaction/' + transactionId)
-          .then(function (response) {
+        vm.selectedTransaction = transaction
+        this.ax.put('/transaction/' + transaction.id)
+        .then(function (response) {
+          if (Number(index) + 1 === Number(total)) {
             vm.getUserTransactions(vm.selectedUser)
-            vm.$parent.showAjaxSuccess({message: 'Outil rendu'})
-          })
+            vm.$parent.showAjaxSuccess({message: total + ' outils rendus'})
+            vm.$parent.getOpenTransactionsCount()
+          }
+        })
       }
     }
   }

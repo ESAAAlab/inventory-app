@@ -12,7 +12,7 @@
         li(v-bind:class='{ "is-active": isHome }')
           router-link(to='/') Accueil
         li(v-bind:class='{ "is-active": isLend }')
-          router-link(to='/lend') Prêts &amp; Retours
+          router-link(:to='{ name: "lend", params: { user: 0 }}' ) Prêts &amp; Retours
         li(v-bind:class='{ "is-active": isInventory }')
           router-link(to='/inventory') Inventaire
     div(class='container')
@@ -33,8 +33,6 @@
   window.FramelessFrame(remote, {
     theme: 'ff-sierra'
   })
-
-  remote.app.setBadgeCount(10)
 
   export default {
     name: 'inventory-app',
@@ -102,6 +100,13 @@
         this.ajaxLoading = val === 1
         this.ajaxError = val === 2
         console.log(this.ajaxLoading + ' / ' + this.ajaxError)
+      },
+      getOpenTransactionsCount () {
+        var vm = this
+        vm.ax.get('/openTransactions')
+        .then(function (response) {
+          remote.app.setBadgeCount(response.data)
+        })
       }
     }
   }

@@ -27,6 +27,13 @@ Vue.filter('formatLendingDate', function (value) {
   return moment(String(value)).locale('fr').format('Do MMMM YYYY à kk:mm')
 })
 
+Vue.filter('formatSinceData', function (value) {
+  var today = moment()
+  var lendDate = moment(String(value))
+  var diff = today.diff(lendDate, 'days') + 1
+  return 'Depuis ' + diff + ' jours'
+})
+
 Vue.use(NProgress)
 Vue.use(VueChartkick, { Chartkick })
 

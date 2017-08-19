@@ -11,9 +11,10 @@ export default new Router({
       component: require('@/components/Home')
     },
     {
-      path: '/lend',
+      path: '/lend/:user',
       name: 'lend',
-      component: require('@/components/Lend')
+      component: require('@/components/Lend'),
+      props: true
     },
     {
       path: '/inventory',
@@ -24,5 +25,8 @@ export default new Router({
       path: '*',
       redirect: '/'
     }
-  ]
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    return { x: 0, y: 0 }
+  }
 })
