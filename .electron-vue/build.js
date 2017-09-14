@@ -97,7 +97,7 @@ function pack (config) {
 }
 
 function web () {
-  del.sync(['dist/web/*', '!.gitkeep'])
+  del.sync(['../inventory-server/www/*', '!.gitkeep'], {force: true})
   webpack(webConfig, (err, stats) => {
     if (err || stats.hasErrors()) console.log(err)
 
