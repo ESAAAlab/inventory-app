@@ -11,6 +11,11 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
+const opts = {
+   IS_RPI_WEBAPP: false
+};
+const q = require('querystring').encode(opts);
+
 /**
  * List of node_modules to include in webpack bundle
  *
@@ -80,6 +85,9 @@ let rendererConfig = {
             loaders: {
               sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
               scss: 'vue-style-loader!css-loader!sass-loader'
+            },
+            preLoaders: {
+              js: `ifdef-loader?${q}`
             }
           }
         }
@@ -122,7 +130,8 @@ let rendererConfig = {
       },
       nodeModules: process.env.NODE_ENV !== 'production'
         ? path.resolve(__dirname, '../node_modules')
-        : false
+        : false,
+      isRpiWebapp: opts.IS_RPI_WEBAPP
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
@@ -148,7 +157,8 @@ let rendererConfig = {
 if (process.env.NODE_ENV !== 'production') {
   rendererConfig.plugins.push(
     new webpack.DefinePlugin({
-      '__static': `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`
+      '__static': `"${path.join(__dirname, '../static').replace(/\\/g, '\\\\')}"`,
+      INVENTORY_BASE_URL: JSON.stringify(process.env.INVENTORY_BASE_URL_DEV)
     })
   )
 }
@@ -172,7 +182,8 @@ if (process.env.NODE_ENV === 'production') {
       }
     ]),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"production"'
+      'process.env.NODE_ENV': '"production"',
+      INVENTORY_BASE_URL: JSON.stringify(process.env.INVENTORY_BASE_URL_PROD)
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true

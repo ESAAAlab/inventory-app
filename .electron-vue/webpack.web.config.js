@@ -10,6 +10,11 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
+const opts = {
+   IS_RPI_WEBAPP: true
+};
+const q = require('querystring').encode(opts);
+
 let webConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
@@ -36,14 +41,14 @@ let webConfig = {
         })
       },
       {
-          test: /\.sass$/,
-          use: [{
-              loader: "style-loader" // creates style nodes from JS strings
-          }, {
-              loader: "css-loader" // translates CSS into CommonJS
-          }, {
-              loader: "sass-loader" // compiles Sass to CSS
-          }]
+        test: /\.sass$/,
+        use: [{
+            loader: "style-loader" // creates style nodes from JS strings
+        }, {
+            loader: "css-loader" // translates CSS into CommonJS
+        }, {
+            loader: "sass-loader" // compiles Sass to CSS
+        }]
       },
       {
         test: /\.html$/,
@@ -64,6 +69,9 @@ let webConfig = {
             loaders: {
               sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
               scss: 'vue-style-loader!css-loader!sass-loader'
+            },
+            preLoaders: {
+              js: `ifdef-loader?${q}`
             }
           }
         }
@@ -100,10 +108,12 @@ let webConfig = {
         removeAttributeQuotes: true,
         removeComments: true
       },
-      nodeModules: false
+      nodeModules: false,
+      isRpiWebapp: opts.IS_RPI_WEBAPP
     }),
     new webpack.DefinePlugin({
-      'process.env.IS_WEB': 'true'
+      'process.env.IS_WEB': 'true',
+      INVENTORY_BASE_URL: JSON.stringify(process.env.INVENTORY_BASE_URL_DEV)
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
@@ -141,7 +151,8 @@ if (process.env.NODE_ENV === 'production') {
       }
     ]),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': '"production"'
+      'process.env.NODE_ENV': '"production"',
+      INVENTORY_BASE_URL: JSON.stringify(process.env.INVENTORY_BASE_URL_PROD)
     }),
     new webpack.LoaderOptionsPlugin({
       minimize: true

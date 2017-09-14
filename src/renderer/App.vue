@@ -24,15 +24,17 @@
   import NprogressContainer from 'vue-nprogress/src/NprogressContainer'
   import NProgress from 'vue-nprogress'
   import miniToastr from 'mini-toastr'
-  import { remote } from 'electron'
+
+  /// #if IS_RPI_WEBAPP == false
+  var remote = require('electron').remote
   // eslint-disable-next-line
-  import FramelessFrame from 'electron-frameless-frame'
-
-  const nprogress = new NProgress({ parent: '.nprogress-container' })
-
+  var FramelessFrame = require('electron-frameless-frame')
   window.FramelessFrame(remote, {
     theme: 'ff-sierra'
   })
+  /// #endif
+
+  const nprogress = new NProgress({ parent: '.nprogress-container' })
 
   export default {
     name: 'inventory-app',
@@ -51,9 +53,12 @@
     created: function () {
       var vm = this
       miniToastr.init()
+
       this.ax = axios.create({
-        baseURL: 'http://localhost:3000/api/v1'
+        //eslint-disable-next-line
+        baseURL: INVENTORY_BASE_URL
       })
+
       this.ax.interceptors.request.use(function (config) {
         // send success
         nprogress.start()
@@ -105,7 +110,9 @@
         var vm = this
         vm.ax.get('/openTransactions')
         .then(function (response) {
+          /// #if IS_RPI_WEBAPP == false
           remote.app.setBadgeCount(response.data)
+          /// #endif
         })
       }
     }

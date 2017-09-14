@@ -41,7 +41,7 @@ export default {
   data () {
     return {
       stockData: [['En stock', 1], ['Prêtés', 0]],
-      stockColors: ['#1bcd88', '#fe4253'],
+      stockColors: ['#0a821e', '#bd0101'],
       oldestLendings: []
     }
   },
@@ -76,7 +76,7 @@ export default {
       var today = moment()
       var lendDate = moment(String(value))
       var diff = today.diff(lendDate, 'days') + 1
-      if (diff > 3) {
+      if (diff >= 2) {
         return true
       } else {
         return false
