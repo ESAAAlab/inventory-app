@@ -54,10 +54,11 @@
       var vm = this
       miniToastr.init()
 
-      this.ax = axios.create({
-        //eslint-disable-next-line
-        baseURL: INVENTORY_BASE_URL
-      })
+      //eslint-disable-next-line
+      axios.defaults.baseURL = INVENTORY_BASE_URL
+      this.ax = axios.create({})
+
+      console.log(this.ax.baseURL)
 
       this.ax.interceptors.request.use(function (config) {
         // send success
