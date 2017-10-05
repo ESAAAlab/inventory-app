@@ -17,9 +17,10 @@ export default new Router({
       props: true
     },
     {
-      path: '/inventory',
-      name: 'return',
-      component: require('@/components/Inventory')
+      path: '/inventory/:tool',
+      name: 'inventory',
+      component: require('@/components/Inventory'),
+      props: true
     },
     {
       path: '*',

@@ -14,7 +14,7 @@
         li(v-bind:class='{ "is-active": isLend }')
           router-link(:to='{ name: "lend", params: { user: 0 }}' ) Prêts &amp; Retours
         li(v-bind:class='{ "is-active": isInventory }')
-          router-link(to='/inventory') Inventaire
+          router-link(:to='{ name: "inventory", params: { tool: 0 }}') Inventaire
     div(class='container')
       router-view
 </template>
