@@ -30,8 +30,8 @@ npm run lint
 
 ``` bash
 # inventory-server API endpoint location for production and development
-INVENTORY_BASE_URL_PROD='http://localhost:3000/api/v1'
-INVENTORY_BASE_URL_DEV='http://localhost:3000/api/v1'
+INVENTORY_BASE_URL_PROD : 'http://localhost:3000/api/v1'
+INVENTORY_BASE_URL_DEV : 'http://localhost:3000/api/v1'
 ```
 ---
 
