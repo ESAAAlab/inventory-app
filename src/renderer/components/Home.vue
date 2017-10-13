@@ -17,7 +17,7 @@
               :key='transaction.id'
               :to='{ name: "lend", params: { user: transaction.lendings[0] }}'
               )
-              div(class='columns is-alternating-row')
+              div(class='columns is-alternating-row is-clickable')
                 div(class='column is-narrow')
                   button(class='button is-small is-danger is-transaction-flag')
                     span(class='icon')

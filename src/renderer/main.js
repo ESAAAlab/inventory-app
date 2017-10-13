@@ -53,7 +53,9 @@ miniToastr.setIcon('warn', 'i', {'class': 'fa fa-exclamation-triangle'})
 
 // Here we setup messages output to `mini-toastr`
 function toast ({title, message, type, timeout, cb}) {
-  return miniToastr[type](message, title, timeout, cb)
+  // var res = miniToastr[type](message, title, timeout, cb)
+  // console.log(res)
+  return null
 }
 
 // Binding for methods .success(), .error() and etc. You can specify and map your own methods here.

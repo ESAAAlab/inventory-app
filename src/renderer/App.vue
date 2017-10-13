@@ -88,12 +88,13 @@
         title: 'Problème lors de la connexion',
         message: 'Merci de réessayer plus tard',
         type: 'error',
-        timeout: '3500'
+        timeout: '1500'
       },
       showAjaxSuccess: {
         title: 'Transaction réussie',
         message: 'Outils prétés',
-        type: 'success'
+        type: 'success',
+        timeout: '1500'
       }
     },
     methods: {
