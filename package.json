@@ -65,6 +65,7 @@
     "ionicons": "^3.0.0",
     "mini-toastr": "^0.6.6",
     "moment": "^2.18.1",
+    "randomstring": "^1.1.5",
     "vue": "^2.4.3",
     "vue-chartkick": "^0.2.0",
     "vue-electron": "^1.0.6",

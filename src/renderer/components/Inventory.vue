@@ -19,20 +19,82 @@
             @item-selected='getTool'
             :placeholder='"Tapez un nom ou scannez un code barre"'
             )
+          button(class='button is-success is-fullwidth' v-if='!selectedTool' v-on:click='addTool()')
+            span(class='icon')
+              i(class='fa fa-plus')
+            span Ajouter un outil
           div(class='card' v-if='selectedTool')
-            //- div(class='card-image')
-            //-   figure(class='image is-square')
-            //-     img(class='center-cropped' :src='selectedTool.pictures[0].content' alt='Image')
             div(class='card-content')
               div(class='content')
                 div(class='media-content')
-                  p(class='title is-4') {{ selectedTool.name }}
-                  p(class='subtitle is-6') {{ selectedTool.brand }} {{ selectedTool.model }}
-                  p {{ selectedTool.description }}
-                  small {{ selectedTool.barcode }}
-                  br
-                  small SN : {{ selectedTool.serialNumber }}
-      div(class='column is-two-thirds' v-if='selectedTool')
+                  div(class='control')
+                    div(class='field')
+                      label(class='label is-small') Nom
+                      div(class='control')
+                        input(class='input' v-bind:class='{ "is-danger": !selectedTool.name }' type='text' v-model='selectedTool.name' placeholder='Nom' )
+                    div(class='field is-grouped' v-if='isNewTool')
+                      label(class='label is-small') Marque
+                        div(class='control is-expanded')
+                          input(class='input' type='text' v-model='selectedTool.brand' placeholder='Marque')
+                      span &nbsp;
+                      label(class='label is-small') Mod&egrave;le
+                        div(class='control')
+                          input(class='input' type='text' v-model='selectedTool.model' placeholder='Modèle')
+                      span &nbsp;
+                      label(class='label is-small') N° de s&eacute;rie
+                        div(class='control')
+                          input(class='input' type='text' v-model='selectedTool.serialNumber' placeholder='N° de série')
+                      span &nbsp;
+                      label(class='label is-small') Code barre
+                        div(class='field has-addons')
+                          div(class='control is-expanded')
+                            input(class='input' type='text' v-model='selectedTool.barcode' placeholder='Code barre')
+                          div(class='control')
+                            a(class='button is-info' v-on:click='generateBarcode()') Generer
+                    div(class='field is-grouped' v-if='!isNewTool')
+                      label(class='label is-small') Marque
+                        div(class='control is-expanded')
+                          input(class='input is-small' type='text' v-model='selectedTool.brand' placeholder='Marque')
+                      span &nbsp;
+                      label(class='label is-small') Mod&egrave;le
+                        div(class='control')
+                          input(class='input is-small' type='text' v-model='selectedTool.model' placeholder='Modèle')
+                    div(class='field is-grouped' v-if='!isNewTool')
+                      label(class='label is-small') N° de s&eacute;rie
+                        div(class='control')
+                          input(class='input is-small' type='text' v-model='selectedTool.serialNumber' placeholder='N° de série')
+                      span &nbsp;
+                      label(class='label is-small') Code barre
+                        div(class='field has-addons')
+                          div(class='control is-expanded')
+                            input(class='input is-small' type='text' v-model='selectedTool.barcode' placeholder='Code barre')
+                          div(class='control')
+                            a(class='button is-info is-small' v-on:click='generateBarcode()') Generer
+                    div(class='field')
+                      label(class='label is-small') Description
+                      div(class='control')
+                        input(class='input' v-bind:class='{ "is-small": !isNewTool }' type='text' v-model='selectedTool.description' placeholder='Description')
+                    div(class='field is-grouped')
+                      label(class='label is-small') Disponible en stock
+                        div(class='control is-expanded')
+                          input(class='input' v-bind:class='{ "is-small": !isNewTool }' type='text' v-model='selectedTool.stockAvailable' placeholder='Marque')
+                      span &nbsp;
+                      label(class='label is-small') Stock maximum
+                        div(class='control')
+                          input(class='input' v-bind:class='{ "is-small": !isNewTool }' type='text' v-model='selectedTool.stockMax' placeholder='Modèle')
+                    div(class='field columns')
+                      div(class='column')
+                        button(class='button is-danger is-fullwidth' v-on:click='resetTool()')
+                          span(class='icon')
+                            i(class='fa fa-times')
+                          span Annuler
+                      div(class='column')
+                        button(class='button is-success is-fullwidth' v-on:click='updateTool()')
+                          span(class='icon')
+                            i(class='fa fa-check')
+                          span Enregistrer
+
+      div(class='column is-two-thirds' v-if='selectedTool && selectedTool.id != null')
         nav(class='panel')
           div(class="panel-heading has-icons-right is-unselectable")
             h1(class='title is-4')
@@ -89,6 +151,7 @@
 <script>
   import Autocomplete from './Components/v-autocomplete/Autocomplete.vue'
   import ToolTemplate from './Components/ToolTemplate.vue'
+  import randomstring from 'randomstring'
 
   export default {
     name: 'tool-search',
@@ -101,7 +164,9 @@
         toolTemplate: ToolTemplate,
         toolTransactions: [],
 
-        latestLendings: []
+        latestLendings: [],
+
+        isNewTool: false
       }
     },
     props: ['tool'],
@@ -153,7 +218,55 @@
           })
       },
 
+      generateBarcode () {
+        this.selectedTool.barcode = 'ESA' + randomstring.generate({
+          length: 10,
+          charset: 'numeric'
+        })
+      },
+
+      updateTool () {
+        var vm = this
+        if (this.isNewTool) {
+          this.ax.post('/inventory/', this.selectedTool)
+            .then(function (response) {
+              vm.isNewTool = false
+              vm.selectedTool = response.data
+              vm.getToolTransactions(vm.selectedTool)
+            })
+        } else {
+          this.ax.put('/inventory/' + this.selectedTool.id, this.selectedTool)
+            .then(function (response) {
+              vm.selectedTool = response.data
+              vm.getToolTransactions(vm.selectedTool)
+            })
+        }
+      },
+
+      addTool () {
+        this.isNewTool = true
+        this.selectedTool = {
+          name: null,
+          model: null,
+          brand: null,
+          barcode: null,
+          serialNumber: null,
+          inventoryNumber: null,
+          acquisitionPrice: null,
+          acquisitionDate: null,
+          description: null,
+          isConsummable: false,
+          stockMax: 1,
+          stockAvailable: 1,
+          stockUnit: 'pc',
+          stockStep: 1,
+          itemLocationId: null,
+          itemCategoryId: null
+        }
+      },
+
       resetTool () {
+        this.isNewTool = false
         this.selectedTool = null
         this.tools = []
         this.getLatestTransactions()
