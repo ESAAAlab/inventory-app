@@ -7,7 +7,7 @@
       strong {{item.lastName}}&nbsp;
       | {{item.firstName}}
     div(class='column is-narrow')
-      small {{item.studentYear.description}}
+      small(v-if='item.userType.id === 1') {{item.studentYear.description}}
 </template>
 
 <script>

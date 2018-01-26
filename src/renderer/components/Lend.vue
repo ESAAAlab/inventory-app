@@ -27,7 +27,7 @@
               div(class='content')
                 div(class='media-content')
                   p(class='title is-4') {{ selectedUser.lastName }} {{ selectedUser.firstName }}
-                  p(class='subtitle is-6') {{ selectedUser.studentYear.description }}
+                  p(class='subtitle is-6' v-if='selectedUser.userType.id === 1') {{ selectedUser.studentYear.description }}
                   p
                     small
                       a(class='panel-block' :href='"mailto:"+selectedUser.email')
