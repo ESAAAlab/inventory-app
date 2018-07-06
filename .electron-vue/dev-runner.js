@@ -48,14 +48,14 @@ function startRenderer () {
       heartbeat: 2500 
     })
 
-    compiler.plugin('compilation', compilation => {
-      compilation.plugin('html-webpack-plugin-after-emit', (data, cb) => {
+    compiler.hooks.compilation.tap('dev-runner', compilation => {
+      compilation.hooks.htmlWebpackPluginAfterEmit.tapAsync('dev-runner', (data, cb) => {
         hotMiddleware.publish({ action: 'reload' })
         cb()
       })
     })
 
-    compiler.plugin('done', stats => {
+    compiler.hooks.done.tap('dev-runner', stats => {
       logStats('Renderer', stats)
     })
 
@@ -64,7 +64,8 @@ function startRenderer () {
       {
         contentBase: path.join(__dirname, '../'),
         quiet: true,
-        setup (app, ctx) {
+        https: true,
+        before (app, ctx) {
           app.use(hotMiddleware)
           ctx.middleware.waitUntilValid(() => {
             resolve()
@@ -82,8 +83,8 @@ function startMain () {
     mainConfig.entry.main = [path.join(__dirname, '../src/main/index.dev.js')].concat(mainConfig.entry.main)
 
     const compiler = webpack(mainConfig)
-
-    compiler.plugin('watch-run', (compilation, done) => {
+    
+    compiler.hooks.watchRun.tapAsync('dev-runner', (compilation, done) => {
       logStats('Main', chalk.white.bold('compiling...'))
       hotMiddleware.publish({ action: 'compiling' })
       done()

@@ -398,13 +398,13 @@
         var vm = this
         vm.selectedTransaction = transaction
         this.ax.put('/transaction/' + transaction.id)
-        .then(function (response) {
-          if (Number(index) + 1 === Number(total)) {
-            vm.getUserTransactions(vm.selectedUser)
-            vm.$parent.showAjaxSuccess({message: total + ' outils rendus'})
-            vm.$parent.getOpenTransactionsCount()
-          }
-        })
+          .then(function (response) {
+            if (Number(index) + 1 === Number(total)) {
+              vm.getUserTransactions(vm.selectedUser)
+              vm.$parent.showAjaxSuccess({message: total + ' outils rendus'})
+              vm.$parent.getOpenTransactionsCount()
+            }
+          })
       }
     }
   }

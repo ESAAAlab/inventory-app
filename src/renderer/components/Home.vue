@@ -56,14 +56,14 @@ export default {
     getStockInfos () {
       var vm = this
       vm.ax.get('/allStockAvailable/')
-      .then(function (response) {
-        vm.stockData[0] = ['En stock', response.data]
-        vm.ax.get('/allStockMax/')
         .then(function (response) {
-          vm.stockData[1] = ['Prêtés', response.data - vm.stockData[0][1]]
-          vm.$refs.stockChart.chart.redraw()
+          vm.stockData[0] = ['En stock', response.data]
+          vm.ax.get('/allStockMax/')
+            .then(function (response) {
+              vm.stockData[1] = ['Prêtés', response.data - vm.stockData[0][1]]
+              vm.$refs.stockChart.chart.redraw()
+            })
         })
-      })
     },
     getOldestTransactions () {
       var vm = this

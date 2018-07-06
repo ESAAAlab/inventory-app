@@ -8,18 +8,18 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: require('@/components/Home')
+      component: require('@/components/Home').default
     },
     {
       path: '/lend/:user',
       name: 'lend',
-      component: require('@/components/Lend'),
+      component: require('@/components/Lend').default,
       props: true
     },
     {
       path: '/inventory/:tool',
       name: 'inventory',
-      component: require('@/components/Inventory'),
+      component: require('@/components/Inventory').default,
       props: true
     },
     {

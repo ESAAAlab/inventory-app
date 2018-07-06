@@ -9,6 +9,7 @@ const webpack = require('webpack')
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
 
 let mainConfig = {
+  mode: 'development',
   entry: {
     main: path.join(__dirname, '../src/main/index.js')
   },
@@ -73,6 +74,7 @@ if (process.env.NODE_ENV !== 'production') {
  * Adjust mainConfig for production settings
  */
 if (process.env.NODE_ENV === 'production') {
+  mainConfig.mode = 'production'
   mainConfig.plugins.push(
     new BabiliWebpackPlugin({
       removeConsole: true,

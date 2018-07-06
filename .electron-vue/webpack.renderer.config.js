@@ -8,8 +8,9 @@ const webpack = require('webpack')
 
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const MiniCSSWebpackPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { VueLoaderPlugin } = require('vue-loader')
 
 const opts = {
    IS_RPI_WEBAPP: false
@@ -26,6 +27,7 @@ const q = require('querystring').encode(opts);
 let whiteListedModules = ['vue']
 
 let rendererConfig = {
+  mode: 'development',
   devtool: '#cheap-module-eval-source-map',
   entry: {
     renderer: path.join(__dirname, '../src/renderer/main.js')
@@ -48,10 +50,12 @@ let rendererConfig = {
       },
       {
         test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: 'css-loader'
-        })
+        use: [
+          {
+            loader: MiniCSSWebpackPlugin.loader
+          },
+          'css-loader'
+        ]
       },
       {
           test: /\.sass$/,
@@ -77,6 +81,18 @@ let rendererConfig = {
         use: 'node-loader'
       },
       {
+          test: /\.pug$/,
+          loader: 'pug-plain-loader'
+      },
+      {
+          test: /\.less$/,
+          use: [
+              'vue-style-loader',
+              'css-loader',
+              'less-loader'
+          ]
+      },
+      {
         test: /\.vue$/,
         use: {
           loader: 'vue-loader',
@@ -98,8 +114,16 @@ let rendererConfig = {
           loader: 'url-loader',
           query: {
             limit: 10000,
-            name: 'imgs/[name].[ext]'
+            name: 'imgs/[name]--[folder].[ext]'
           }
+        }
+      },
+      {
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          name: 'media/[name]--[folder].[ext]'
         }
       },
       {
@@ -108,7 +132,7 @@ let rendererConfig = {
           loader: 'url-loader',
           query: {
             limit: 10000,
-            name: 'fonts/[name].[ext]'
+            name: 'fonts/[name]--[folder].[ext]'
           }
         }
       }
@@ -119,7 +143,10 @@ let rendererConfig = {
     __filename: process.env.NODE_ENV !== 'production'
   },
   plugins: [
-    new ExtractTextPlugin('styles.css'),
+    new VueLoaderPlugin(),
+    new MiniCSSWebpackPlugin({
+      filename: 'styles.css'
+    }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, '../src/index.ejs'),
@@ -168,7 +195,7 @@ if (process.env.NODE_ENV !== 'production') {
  */
 if (process.env.NODE_ENV === 'production') {
   rendererConfig.devtool = ''
-
+  rendererConfig.mode = 'production'
   rendererConfig.plugins.push(
     new BabiliWebpackPlugin({
       removeConsole: true,

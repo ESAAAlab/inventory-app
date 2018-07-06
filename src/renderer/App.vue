@@ -16,14 +16,13 @@
         li(v-bind:class='{ "is-active": isInventory }')
           router-link(:to='{ name: "inventory", params: { tool: 0 }}') Inventaire
     div(class='container')
-      router-view
+    router-view
 </template>
 
 <script>
   import axios from 'axios'
   import NprogressContainer from 'vue-nprogress/src/NprogressContainer'
   import NProgress from 'vue-nprogress'
-  import miniToastr from 'mini-toastr'
 
   /// #if IS_RPI_WEBAPP == false
   var remote = require('electron').remote
@@ -52,13 +51,10 @@
     },
     created: function () {
       var vm = this
-      miniToastr.init()
 
-      //eslint-disable-next-line
+      // eslint-disable-next-line
       axios.defaults.baseURL = INVENTORY_BASE_URL
       this.ax = axios.create({})
-
-      console.log(this.ax.baseURL)
 
       this.ax.interceptors.request.use(function (config) {
         // send success
@@ -111,11 +107,11 @@
       getOpenTransactionsCount () {
         var vm = this
         vm.ax.get('/openTransactions')
-        .then(function (response) {
-          /// #if IS_RPI_WEBAPP == false
-          remote.app.setBadgeCount(response.data)
-          /// #endif
-        })
+          .then(function (response) {
+            /// #if IS_RPI_WEBAPP == false
+            remote.app.setBadgeCount(response.data)
+            /// #endif
+          })
       }
     }
   }

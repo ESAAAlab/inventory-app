@@ -37,20 +37,6 @@ Vue.filter('formatSinceData', function (value) {
 Vue.use(NProgress)
 Vue.use(VueChartkick, { Chartkick })
 
-// SETUP NOTIFICATIONS
-// const toastTypes = {
-//   success: 'success',
-//   error: 'error',
-//   info: 'info',
-//   warn: 'warn'
-// }
-
-// miniToastr.init({types: toastTypes})
-// miniToastr.setIcon('error', 'i', {'class': 'fa fa-warning'})
-// miniToastr.setIcon('info', 'i', {'class': 'fa fa-info-circle'})
-// miniToastr.setIcon('success', 'i', {'class': 'fa fa-check-circle-o'})
-// miniToastr.setIcon('warn', 'i', {'class': 'fa fa-exclamation-triangle'})
-
 // Here we setup messages output to `mini-toastr`
 function toast ({title, message, type, timeout, cb}) {
   // var res = miniToastr[type](message, title, timeout, cb)

@@ -7,8 +7,9 @@ const webpack = require('webpack')
 
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const MiniCSSWebpackPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { VueLoaderPlugin } = require('vue-loader')
 
 const opts = {
    IS_RPI_WEBAPP: true
@@ -17,6 +18,7 @@ const q = require('querystring').encode(opts);
 
 let webConfig = {
   devtool: '#cheap-module-eval-source-map',
+  mode: 'development',
   entry: {
     web: path.join(__dirname, '../src/renderer/main.js')
   },
@@ -35,10 +37,24 @@ let webConfig = {
       },
       {
         test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: 'css-loader'
-        })
+        use: [
+          {
+            loader: MiniCSSWebpackPlugin.loader
+          },
+          'css-loader'
+        ]
+      },
+      {
+        test: /\.pug$/,
+        loader: 'pug-plain-loader'
+      },
+      {
+        test: /\.less$/,
+        use: [
+          'vue-style-loader',
+          'css-loader',
+          'less-loader'
+        ]
       },
       {
         test: /\.sass$/,
@@ -99,7 +115,10 @@ let webConfig = {
     ]
   },
   plugins: [
-    new ExtractTextPlugin('styles.css'),
+    new VueLoaderPlugin(),
+    new MiniCSSWebpackPlugin({
+      filename: 'styles.css'
+    }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, '../src/index.ejs'),
@@ -137,7 +156,7 @@ let webConfig = {
  */
 if (process.env.NODE_ENV === 'production') {
   webConfig.devtool = ''
-
+  webConfig.mode = 'production'
   webConfig.plugins.push(
     new BabiliWebpackPlugin({
       removeConsole: true,

@@ -16,7 +16,7 @@ let mainWindow
 let instanceWindow = null
 
 const winURL = process.env.NODE_ENV === 'development'
-  ? `http://localhost:9080`
+  ? `https://localhost:9080`
   : `file://${__dirname}/index.html`
 
 function createWindow () {
@@ -66,6 +66,18 @@ const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) 
 if (isSecondInstance) {
   app.quit()
 }
+
+app.on('certificate-error', (event, webContents, url, error, certificate, cb) => {
+  // On certificate error we disable default behaviour (stop loading the page)
+  // and we then say "it is all fine - true" to the callback
+  if (url === 'https://localhost:9080/') {
+    event.preventDefault()
+    // eslint-disable-next-line
+    cb(true)
+  }
+  // event.preventDefault()
+  // callback(true)
+})
 
 app.on('ready', createWindow)
 
