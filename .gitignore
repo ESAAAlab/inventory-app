@@ -11,3 +11,4 @@ thumbs.db
 psd/
 *lock*
 init.sh
+yarn*
