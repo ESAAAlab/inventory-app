@@ -12,10 +12,7 @@ const MiniCSSWebpackPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
 
-const opts = {
-   IS_RPI_WEBAPP: false
-};
-const q = require('querystring').encode(opts);
+// const q = require('querystring').encode(opts);
 
 /**
  * List of node_modules to include in webpack bundle
@@ -101,10 +98,10 @@ let rendererConfig = {
             loaders: {
               sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
               scss: 'vue-style-loader!css-loader!sass-loader'
-            },
-            preLoaders: {
-              js: `ifdef-loader?${q}`
-            }
+            } //,
+            // preLoaders: {
+            //   js: `ifdef-loader?${q}`
+            // }
           }
         }
       },
@@ -158,7 +155,7 @@ let rendererConfig = {
       nodeModules: process.env.NODE_ENV !== 'production'
         ? path.resolve(__dirname, '../node_modules')
         : false,
-      isRpiWebapp: opts.IS_RPI_WEBAPP
+      target: 'electron-renderer'
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()

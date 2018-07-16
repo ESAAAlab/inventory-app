@@ -24,14 +24,14 @@
   import NprogressContainer from 'vue-nprogress/src/NprogressContainer'
   import NProgress from 'vue-nprogress'
 
-  /// #if IS_RPI_WEBAPP == false
-  var remote = require('electron').remote
-  // eslint-disable-next-line
-  var FramelessFrame = require('electron-frameless-frame')
-  window.FramelessFrame(remote, {
-    theme: 'ff-sierra'
-  })
-  /// #endif
+  if (process.type === 'renderer') {
+    var remote = require('electron').remote
+    // eslint-disable-next-line
+    var FramelessFrame = require('electron-frameless-frame')
+    window.FramelessFrame(remote, {
+      theme: 'ff-sierra'
+    })
+  }
 
   const nprogress = new NProgress({ parent: '.nprogress-container' })
 
@@ -108,9 +108,9 @@
         var vm = this
         vm.ax.get('/openTransactions')
           .then(function (response) {
-            /// #if IS_RPI_WEBAPP == false
-            remote.app.setBadgeCount(response.data)
-            /// #endif
+            if (process.type === 'renderer') {
+              remote.app.setBadgeCount(response.data)
+            }
           })
       }
     }

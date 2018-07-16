@@ -70,13 +70,15 @@ if (isSecondInstance) {
 app.on('certificate-error', (event, webContents, url, error, certificate, cb) => {
   // On certificate error we disable default behaviour (stop loading the page)
   // and we then say "it is all fine - true" to the callback
-  if (url === 'https://localhost:9080/') {
+  if (url === 'https://localhost:9080/' ||
+    certificate.fingerprint === 'sha256/688h4b3aky3cYnb+AOnYRPmZ6j1Iufy3IOg9jwS5AnI=') {
     event.preventDefault()
     // eslint-disable-next-line
     cb(true)
+  } else {
+    // eslint-disable-next-line
+    cb(false)
   }
-  // event.preventDefault()
-  // callback(true)
 })
 
 app.on('ready', createWindow)

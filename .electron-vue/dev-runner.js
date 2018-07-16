@@ -64,7 +64,7 @@ function startRenderer () {
       {
         contentBase: path.join(__dirname, '../'),
         quiet: true,
-        https: true,
+        https: true,        
         before (app, ctx) {
           app.use(hotMiddleware)
           ctx.middleware.waitUntilValid(() => {
@@ -73,7 +73,7 @@ function startRenderer () {
         }
       }
     )
-
+    server.host = 'localhost'
     server.listen(9080)
   })
 }

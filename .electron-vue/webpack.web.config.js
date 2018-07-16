@@ -11,9 +11,6 @@ const MiniCSSWebpackPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
 
-const opts = {
-   IS_RPI_WEBAPP: true
-};
 const q = require('querystring').encode(opts);
 
 let webConfig = {
@@ -128,7 +125,7 @@ let webConfig = {
         removeComments: true
       },
       nodeModules: false,
-      isRpiWebapp: opts.IS_RPI_WEBAPP
+      target: 'web'
     }),
     new webpack.DefinePlugin({
       'process.env.IS_WEB': 'true',
